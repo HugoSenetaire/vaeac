@@ -5,8 +5,10 @@ from torch.utils.data import Dataset
 from torchvision.datasets.folder import default_loader
 from torchvision.transforms import CenterCrop, Compose, Normalize, ToTensor
 
-from mask_generators import ImageMaskGenerator
-
+try :
+    from .mask_generators import ImageMaskGenerator
+except :
+    from mask_generators import ImageMaskGenerator
 
 def compute_normalization(data, one_hot_max_sizes):
     """
@@ -156,7 +158,7 @@ class GeneratorDataset(Dataset):
         return self.data[idx]
 
 
-def load_dataset(name):
+def load_dataset(name, root_dir):
     """
     Returns dataset for image inpainting.
     Now returns only CelebA dataset (train, validation and test parts of it)
@@ -167,7 +169,7 @@ def load_dataset(name):
         ToTensor(),
         Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
-    celeba_root_dir = '/dbstore/datasets/celebA'  # change it for your system!
+    celeba_root_dir = root_dir # change it for your system!
     celeba_img_dir = join(celeba_root_dir, 'img_align_celeba')
     celeba_partition = join(celeba_root_dir, 'list_eval_partition.txt')
 
@@ -196,6 +198,6 @@ def load_dataset(name):
             celeba_transforms), 256)
     elif name == 'celeba_inpainting_masks':
         return GeneratorDataset(ImageMaskGenerator(),
-                                load_dataset('celeba_test'))
+                                load_dataset('celeba_test', root_dir=root_dir))
     else:
         raise ValueError('Unknown dataset %s' % str(name))

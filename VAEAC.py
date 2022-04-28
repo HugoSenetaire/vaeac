@@ -4,8 +4,10 @@ import torch
 from torch.distributions import kl_divergence
 from torch.nn import Module
 
-from prob_utils import normal_parse_params
-
+try :
+    from .prob_utils import normal_parse_params
+except:
+    from prob_utils import normal_parse_params
 
 class VAEAC(Module):
     """
@@ -142,7 +144,7 @@ class VAEAC(Module):
         With torch.no_grad the method doesn't require extra memory
         except the memory for the result.
         """
-        _, prior = self.make_latent_distributions(batch, mask)
+        _, prior = self.make_latent_distributions(batch, mask) # No proposal because we observe everything.
         samples_params = []
         for i in range(K):
             latent = prior.rsample()
