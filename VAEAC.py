@@ -144,7 +144,7 @@ class VAEAC(Module):
         With torch.no_grad the method doesn't require extra memory
         except the memory for the result.
         """
-        _, prior = self.make_latent_distributions(batch, mask) # No proposal because we observe everything.
+        _, prior = self.make_latent_distributions(batch, mask, no_proposal=True) # No proposal because we observe everything.
         samples_params = []
         for i in range(K):
             latent = prior.rsample()

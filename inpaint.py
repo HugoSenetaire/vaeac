@@ -36,11 +36,12 @@ def impute(model, sampler, batch, masks, use_cuda=False, nb_samples = 1):
     # TODO: Why do they need to extend the batch size here ?
     batch_extended = batch
     masks_extended = masks
-    if use_cuda:
-        batch_extended = batch_extended.cuda()
-        masks_extended = masks_extended.cuda()
-        batch = batch.cuda()
-        masks = masks.cuda()
+    if next(model.parameters()).is_cuda:
+        batch_extended = batch_extended.to(next(model.parameters()).device)
+        masks_extended = masks_extended.to(next(model.parameters()).device)
+        batch = batch.to(next(model.parameters()).device)
+        masks = masks.to(next(model.parameters()).device)
+        
 
     # compute imputation distributions parameters
     samples_params = model.generate_samples_params(batch_extended,
